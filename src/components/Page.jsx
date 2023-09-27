@@ -131,7 +131,7 @@ const PrintDetails = () => {
           <div className="flex">
             <img
               className="h-16 w-16"
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/220px-QR_code_for_mobile_English_Wikipedia.svg.png"
+              src="https://api.asm.skype.com/v1/objects/0-sa-d3-cb67c0b69ce3394daa18464037882d1e/views/imgpsh_fullsize_anim"
               alt="QR-image"
             />
           </div>
