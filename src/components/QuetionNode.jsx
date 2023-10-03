@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { Handle, Position } from "reactflow";
-import './tooltip.css'
+import "./tooltip.css";
 import {
   deleteFollowup,
   deleteQuestion,
@@ -14,6 +14,7 @@ import {
   deleteNodesofBuilder,
   updateEdgesofBuilder,
   updateHeightOfAnswerNode,
+  updateInputValueOfNode,
   updateNodesOfBuilder,
   updatePostionOfchildNodes,
 } from "../states/slices/builderSlice";
@@ -26,40 +27,58 @@ const handleStyle = {
   borderTop: "5px solid #333",
 };
 
-export default  function QuetionNode({ data, isConnectable, id }) {
+export default function QuetionNode({ data, isConnectable, id }) {
   const [visibility, setVisibility] = useState(true);
-  const [inputValue, setInputvalue] = useState("");
+  const inputRef = useRef();
   const [deleteButtonVisibility, setDeleteButtonVisibility] = useState(false);
   const nodes = useSelector((state) => state.builder.nodes);
   const edges = useSelector((state) => state.builder.edges);
   const questions = useSelector((state) => state.questions.questions);
-  
+
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    inputRef.current.value = data.inputValue ? data.inputValue : "";
+    if (inputRef.current.value) {
+      setVisibility(false);
+    }
+  }, []);
+
   function saveClickHandler() {
-    if (inputValue) setVisibility((pre) => !pre);
+    if (inputRef.current.value) {
+      setVisibility((pre) => !pre);
+    }
     const parentId = data.parentNode;
 
     const node = nodes.find((item) => item.id === parentId);
-   
+
+    dispatch(
+      updateInputValueOfNode({ id: id, inputValue: inputRef.current.value })
+    );
+
     dispatch(
       updateFollowup({
         queId: node.data.parentNode,
         queNodeId: id,
-        queText: inputValue,
+        queText: inputRef.current.value,
       })
     );
   }
 
-   function deleteQuestionHandler() {
-    const parentId = data.parentNode ;
-    const node = nodes.find(item => item.id === parentId)
-    dispatch(updatePostionOfchildNodes({parentId:parentId , id:id}))
+  function deleteQuestionHandler() {
+    const parentId = data.parentNode;
+    const node = nodes.find((item) => item.id === parentId);
+    dispatch(updatePostionOfchildNodes({ parentId: parentId, id: id }));
     dispatch(deleteNodesofBuilder(id));
     dispatch(deleteEdgesofBuilder(id));
-    dispatch(deleteFollowup({queId:node.parentNode ? node.parentNode :'hello', queNodeId:id}))
-    dispatch(deleteQuestion(id))
-    dispatch(updateHeightOfAnswerNode({id:parentId , type:'decrese'}))
+    dispatch(
+      deleteFollowup({
+        queId: node.parentNode ? node.parentNode : "hello",
+        queNodeId: id,
+      })
+    );
+    dispatch(deleteQuestion(id));
+    dispatch(updateHeightOfAnswerNode({ id: parentId, type: "decrese" }));
   }
 
   useEffect(() => {
@@ -74,17 +93,14 @@ export default  function QuetionNode({ data, isConnectable, id }) {
       <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg">
         <div className="flex items-center">
           <div className="tooltip">
-      
-              <input
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputvalue(e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:border-blue-500"
-                placeholder="Type your question ..."
-                disabled={!visibility}
-              />
-              <span className="tooltip-text">{inputValue}</span>
-       
+            <input
+              type="text"
+              ref={inputRef}
+              className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:border-blue-500"
+              placeholder="Type your question ..."
+              disabled={!visibility}
+            />
+            <span className="tooltip-text">{inputRef.current?.value}</span>
           </div>
 
           <div className="text-center mx-2">
@@ -96,10 +112,7 @@ export default  function QuetionNode({ data, isConnectable, id }) {
               )}
             </button>
             {deleteButtonVisibility && (
-              <button
-                className="ml-4"
-                onClick={()=>deleteQuestionHandler()}
-              >
+              <button className="ml-4" onClick={() => deleteQuestionHandler()}>
                 <Delete sx={{ color: "red" }}></Delete>
               </button>
             )}
@@ -114,5 +127,3 @@ export default  function QuetionNode({ data, isConnectable, id }) {
     </div>
   );
 }
-
-

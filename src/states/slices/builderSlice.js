@@ -10,7 +10,7 @@ const nodes = n
         position: { x: 0, y: 60 },
         draggable: true,
         type: "answerNode",
-        data: { parentNode: "hello", height: 170 },
+        data: { parentNode: "hello", height: 170, inputValue: "" },
       },
     ];
 const edges = e ? JSON.parse(e) : [];
@@ -74,6 +74,13 @@ const BuilderSlice = createSlice({
         });
       }
     },
+    updateInputValueOfNode(state, action) {
+      state.nodes.forEach((item) => {
+        if (item.id === action.payload.id) {
+          item.data.inputValue = action.payload.inputValue;
+        }
+      });
+    },
   },
 });
 
@@ -85,4 +92,5 @@ export const {
   deleteNodesofBuilder,
   updatePostionOfchildNodes,
   updateHeightOfAnswerNode,
+  updateInputValueOfNode,
 } = BuilderSlice.actions;
