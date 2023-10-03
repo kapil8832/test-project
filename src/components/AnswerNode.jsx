@@ -3,10 +3,11 @@ import { Handle, Position } from "reactflow";
 import QuetionNode from "./QuetionNode";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { updateEdgesofBuilder, updateNodesOfBuilder } from "../states/slices/builderSlice";
+import { updateEdgesofBuilder, updateHeightOfAnswerNode, updateNodesOfBuilder } from "../states/slices/builderSlice";
 import { addFollowup, addQuestion, updateQuestion } from "../states/slices/questionsSlice";
 import { DeleteForever, DeleteForeverOutlined, Edit, Save } from "@mui/icons-material";
 import { green } from "@mui/material/colors";
+import './tooltip.css'
 
 const handleStyle = {
     backgroundColor: "transparent",
@@ -24,10 +25,8 @@ function AnswerNode({ data, isConnectable, id , parentNode }) {
   const nodes = useSelector((state) => state.builder.nodes);
   const edges = useSelector((state) => state.builder.edges);
   const quetions = useSelector(state=>state.questions.questions);
- const [height, setHeight] = useState(200) ;
 
 
-  console.log(data.parentNode);
   function saveClickHandler() {
     if (inputValue) setVisibility((pre) => !pre);
     dispatch(updateQuestion({queId:data.parentNode, ansText:inputValue}))
@@ -42,13 +41,15 @@ function AnswerNode({ data, isConnectable, id , parentNode }) {
             }
         }
     })
+
     if(pos === 0 ){
-        pos = 100 ;
+      pos = 80 ;
     }
+  
 
     const newQuestionNode = {
       id: Date.now().toString(),
-      position: { x: 0, y: pos+80 },
+      position: { x: 0, y: pos+60 },
       draggable: false,
       isConnectable:false ,
       type: "quetionNode",
@@ -60,11 +61,11 @@ function AnswerNode({ data, isConnectable, id , parentNode }) {
     const newAnswerNode = {
         id: Date.now().toString()+'1',
         parentNode:newQuestionNode.id ,
-        position: { x: 500, y: pos+80 },
+        position: { x: 500, y:pos-80},
         draggable: true,
         type: "answerNode",
         isConnectable:false ,
-        data:{ parentNode:newQuestionNode.id}
+        data:{ parentNode:newQuestionNode.id , height:170}
     }
     const newEdge = {
         id: Date.now().toString(),
@@ -77,15 +78,12 @@ function AnswerNode({ data, isConnectable, id , parentNode }) {
     dispatch(updateNodesOfBuilder([...nodes , newQuestionNode ,newAnswerNode ]));
     dispatch(addQuestion({queId:newQuestionNode.id , ansId:newAnswerNode.id})) ;
     dispatch(addFollowup({queId:data.parentNode,newQueId:newQuestionNode.id }))
-    setHeight(pre=> pre + 80)
+    dispatch(updateHeightOfAnswerNode({id:id , type:'increase'}))
   }
-   console.log(quetions)
-
- 
 
   const divStyle = {
     width: '400px',
-    height: `${height}px`,
+    height: `${data.height}px`,
   };
 
 
@@ -98,24 +96,20 @@ function AnswerNode({ data, isConnectable, id , parentNode }) {
         isConnectable={isConnectable}
         style={handleStyle}
       />
-      <div class="max-w-md mx-auto bg-white p-8 rounded-lg  w-full">
+      <div className="max-w-md mx-auto bg-white p-8 rounded-lg  w-full">
         <div className="flex items-center">
-          <div className="mb-4">
-            {visibility && (
+          <div className="mb-4 tooltip">
+           
               <input
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputvalue(e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:border-blue-500"
                 placeholder="Type your answer ..."
+                disabled={!visibility}
               />
-            )}
-            {!visibility && (
-              <h3 className="w-[255px] px-3 py-2 border rounded-lg text-gray-700">
-                {" "}
-                {inputValue}
-              </h3>
-            )}
+              <span className="tooltip-text">{inputValue}</span>
+            
           </div>
 
           <div className="text-center mx-2 mb-4">
@@ -136,4 +130,6 @@ function AnswerNode({ data, isConnectable, id , parentNode }) {
   );
 }
 
-export default AnswerNode;
+export default AnswerNode ;
+
+

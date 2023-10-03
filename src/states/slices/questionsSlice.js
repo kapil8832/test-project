@@ -1,9 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-
-const QuestionsSlice = createSlice({
-  name: "questions",
-  initialState: {
-    questions: {
+const q = localStorage.getItem("questions");
+const questions = q
+  ? JSON.parse(q)
+  : {
       hello: {
         ansId: "root",
         data: {
@@ -12,7 +11,12 @@ const QuestionsSlice = createSlice({
           followUp: [], //{ queId: "", queText: "" } array item .
         },
       },
-    },
+    };
+
+const QuestionsSlice = createSlice({
+  name: "questions",
+  initialState: {
+    questions: questions,
   },
   reducers: {
     addQuestion(state, action) {
@@ -26,9 +30,12 @@ const QuestionsSlice = createSlice({
       };
     },
     updateQuestion(state, action) {
-      state.questions[action.payload.queId].data.ansText = action.payload.ansText;
+      state.questions[action.payload.queId].data.ansText =
+        action.payload.ansText;
     },
-    deleteQuestion(state, action) {},
+    deleteQuestion(state, action) {
+      delete state.questions[action.payload];
+    },
     addFollowup(state, action) {
       state.questions[action.payload.queId].data.followUp.push({
         queId: action.payload.newQueId,
@@ -36,14 +43,18 @@ const QuestionsSlice = createSlice({
       });
     },
     updateFollowup(state, action) {
-      console.log(action.payload)
-      state.questions[action.payload.queId].data.followUp.forEach(item=>{
-        if(item.queId === action.payload.queNodeId ){
-            item.queText = action.payload.queText ;
+      state.questions[action.payload.queId].data.followUp.forEach((item) => {
+        if (item.queId === action.payload.queNodeId) {
+          item.queText = action.payload.queText;
         }
-      })
+      });
     },
-    deleteFollowup(state, action) {},
+    deleteFollowup(state, action) {
+      const updatedFollowups = state.questions[
+        action.payload.queId
+      ].data.followUp.filter((item) => item.queId !== action.payload.queNodeId);
+      state.questions[action.payload.queId].data.followUp = updatedFollowups;
+    },
   },
 });
 

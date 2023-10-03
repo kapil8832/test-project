@@ -17,26 +17,32 @@ import "./text-updater-node.css";
 import { useDispatch } from "react-redux";
 import { updateEdges, updateNodes } from "../states/slices/chatbotSlice";
 import { updateEdgesofBuilder, updateNodesOfBuilder } from "../states/slices/builderSlice";
+import CustomTooltip from "./CustomTooltip";
 
 const rfStyle = {
   backgroundColor: "#B8CEFF",
 };
 
-const edges = [];
 
 const nodeTypes = { answerNode: AnswerNode, quetionNode: QuetionNode };
 const edgeTypes = {step: StepEdge , smoothstep: SmoothStepEdge }
 function Builder() {
     const edges = useSelector(state=>state.builder.edges)
     const nodes = useSelector(state=>state.builder.nodes)
+    const questions = useSelector((state) => state.questions.questions);
+    localStorage.setItem('edges' , JSON.stringify(edges))
+    localStorage.setItem('nodes' , JSON.stringify(nodes))
+    localStorage.setItem('questions' , JSON.stringify(questions))
 
 
   const disptach = useDispatch();
 
   const onNodesChange = useCallback(
     (changes) => {
+         if(changes[0].type !== "position"){
+          return ;
+         }
         const updatedNodes = applyNodeChanges(changes, nodes)
-        console.log(updatedNodes)
         disptach(updateNodesOfBuilder(updatedNodes))},
       [nodes]
   );
@@ -49,9 +55,6 @@ function Builder() {
     (changes) => disptach(updateEdgesofBuilder( addEdge(changes, edges))),
     [edges]
   );
-
-  console.log(edges);
-  console.log(nodes);
 
   return (
     <div className="h-[100vh] w-[100vw]">
