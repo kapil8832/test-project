@@ -10,7 +10,7 @@ const nodes = n
         position: { x: 0, y: 60 },
         draggable: true,
         type: "answerNode",
-        data: { parentNode: "hello", height: 170, inputValue: "" },
+        data: { parentNode: "hello", height: 180, inputValue: "" },
       },
     ];
 const edges = e ? JSON.parse(e) : [];

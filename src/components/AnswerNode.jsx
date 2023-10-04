@@ -3,6 +3,7 @@ import { Handle, Position } from "reactflow";
 import QuetionNode from "./QuetionNode";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+import Showdown from "showdown";
 import {
   updateEdgesofBuilder,
   updateHeightOfAnswerNode,
@@ -34,28 +35,39 @@ const handleStyle = {
 
 function AnswerNode({ data, isConnectable, id, parentNode }) {
   const [visibility, setVisibility] = useState(true);
-  const inputref = useRef();
+  const [inputValue , setInputValue] = useState('')
   const dispatch = useDispatch();
   const nodes = useSelector((state) => state.builder.nodes);
   const edges = useSelector((state) => state.builder.edges);
   const quetions = useSelector((state) => state.questions.questions);
 
+  const [htmlOutput, setHtmlOutput] = useState('');
+
+  const convertToHTML = (input) => {
+    const converter = new Showdown.Converter();
+    const htmlOutput = converter.makeHtml(input);
+    setHtmlOutput(htmlOutput);
+  };
+
   useEffect(() => {
-    inputref.current.value = data.inputValue ? data.inputValue : "";
-    if (inputref.current.value) {
+    setInputValue(data.inputValue ? data.inputValue : "")
+    convertToHTML(data.inputValue ? data.inputValue : "")
+    // inputref.current.value = data.inputValue ? data.inputValue : "";
+    if (data.inputValue) {
       setVisibility(false);
     }
   }, []);
 
   function saveClickHandler() {
-    if (inputref.current.value) setVisibility((pre) => !pre);
+    if (inputValue) setVisibility((pre) => !pre);
+
     dispatch(
-      updateInputValueOfNode({ id: id, inputValue: inputref.current.value })
+      updateInputValueOfNode({ id: id, inputValue: inputValue })
     );
     dispatch(
       updateQuestion({
         queId: data.parentNode,
-        ansText: inputref.current.value,
+        ansText: inputValue,
       })
     );
   }
@@ -92,7 +104,7 @@ function AnswerNode({ data, isConnectable, id, parentNode }) {
       draggable: true,
       type: "answerNode",
       isConnectable: false,
-      data: { parentNode: newQuestionNode.id, height: 170, inputValue: "" },
+      data: { parentNode: newQuestionNode.id, height: 180, inputValue: "" },
     };
     const newEdge = {
       id: Date.now().toString(),
@@ -130,14 +142,18 @@ function AnswerNode({ data, isConnectable, id, parentNode }) {
       <div className="max-w-md mx-auto bg-white p-8 rounded-lg  w-full">
         <div className="flex items-center">
           <div className="mb-4 tooltip">
-            <input
+            <textarea
+              value={inputValue}
               type="text"
-              ref={inputref}
-              className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:border-blue-500"
+              onChange={(e)=>{setInputValue(e.target.value); convertToHTML(e.target.value)}}
+              className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:border-blue-500 input-with-tooltip"
               placeholder="Type your answer ..."
               disabled={!visibility}
+              style={{resize:'none'}}
+              rows={1}
+              cols={70}
             />
-            <span className="tooltip-text">{inputref?.current?.value}</span>
+            <div className="tooltip-text" dangerouslySetInnerHTML={{ __html: htmlOutput }}></div>
           </div>
 
           <div className="text-center mx-2 mb-4">

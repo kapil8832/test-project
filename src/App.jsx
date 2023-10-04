@@ -17,7 +17,7 @@ const App = () => {
           <Route path="/print" element={<PrintDetails/>}></Route>
           <Route path="/plumb" element={<JsPlumbExample/>}></Route>
           <Route path="/flow" element={<Flow/>}></Route>
-          <Route path="/builder" element={<Builder/>}></Route>
+          <Route path="/" element={<Builder/>}></Route>
         </Routes>
       </BrowserRouter>
     </>

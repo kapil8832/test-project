@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { Handle, Position } from "reactflow";
+import Showdown from "showdown";
 import "./tooltip.css";
 import {
   deleteFollowup,
@@ -31,21 +32,31 @@ export default function QuetionNode({ data, isConnectable, id }) {
   const [visibility, setVisibility] = useState(true);
   const inputRef = useRef();
   const [deleteButtonVisibility, setDeleteButtonVisibility] = useState(false);
+  const [inputValue , setInputValue] = useState('') ;
   const nodes = useSelector((state) => state.builder.nodes);
   const edges = useSelector((state) => state.builder.edges);
   const questions = useSelector((state) => state.questions.questions);
 
   const dispatch = useDispatch();
+  const [htmlOutput, setHtmlOutput] = useState('');
+
+  const convertToHTML = (input) => {
+    const converter = new Showdown.Converter();
+    const htmlOutput = converter.makeHtml(input);
+    setHtmlOutput(htmlOutput);
+  };
 
   useEffect(() => {
-    inputRef.current.value = data.inputValue ? data.inputValue : "";
-    if (inputRef.current.value) {
+    // inputRef.current.value = data.inputValue ? data.inputValue : "";
+    setInputValue(data.inputValue ? data.inputValue : "")
+    convertToHTML(data.inputValue ? data.inputValue : "")
+    if (data.inputValue) {
       setVisibility(false);
     }
   }, []);
 
   function saveClickHandler() {
-    if (inputRef.current.value) {
+    if (inputValue) {
       setVisibility((pre) => !pre);
     }
     const parentId = data.parentNode;
@@ -53,14 +64,14 @@ export default function QuetionNode({ data, isConnectable, id }) {
     const node = nodes.find((item) => item.id === parentId);
 
     dispatch(
-      updateInputValueOfNode({ id: id, inputValue: inputRef.current.value })
+      updateInputValueOfNode({ id: id, inputValue: inputValue })
     );
 
     dispatch(
       updateFollowup({
         queId: node.data.parentNode,
         queNodeId: id,
-        queText: inputRef.current.value,
+        queText: inputValue,
       })
     );
   }
@@ -93,14 +104,19 @@ export default function QuetionNode({ data, isConnectable, id }) {
       <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg">
         <div className="flex items-center">
           <div className="tooltip">
-            <input
+            <textarea
               type="text"
+              value={inputValue}
+              onChange={(e)=>{setInputValue(e.target.value);convertToHTML(e.target.value) }}
               ref={inputRef}
-              className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:border-blue-500 input-with-tooltip"
               placeholder="Type your question ..."
               disabled={!visibility}
+              style={{resize:'none'}}
+              rows={1}
+              cols={23}
             />
-            <span className="tooltip-text">{inputRef.current?.value}</span>
+            <div className="tooltip-text" dangerouslySetInnerHTML={{ __html: htmlOutput }}></div>
           </div>
 
           <div className="text-center mx-2">
