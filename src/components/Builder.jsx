@@ -1,5 +1,8 @@
 import { useCallback, useState } from "react";
 import ReactFlow, {
+  Background,
+  Controls,
+  MiniMap,
   addEdge,
   applyEdgeChanges,
   applyNodeChanges,
@@ -59,7 +62,7 @@ function Builder() {
   );
 
   return (
-    <div className="h-[100vh] w-[100vw]">
+    <div className="h-[100vh] w-[100vw] bg-white">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -68,7 +71,11 @@ function Builder() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         style={rfStyle}
-      />
+      >
+        <Background style={{backgroundColor:'white'}}></Background>
+        <MiniMap></MiniMap>
+        <Controls></Controls>
+      </ReactFlow>
     </div>
   );
 }

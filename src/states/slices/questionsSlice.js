@@ -24,8 +24,8 @@ const QuestionsSlice = createSlice({
         ansId: action.payload.ansId,
         data: {
           ansText: "",
-          isDone: false,
           followUp: [],
+          statusMarker:false ,
         },
       };
     },
@@ -55,6 +55,9 @@ const QuestionsSlice = createSlice({
       ].data.followUp.filter((item) => item.queId !== action.payload.queNodeId);
       state.questions[action.payload.queId].data.followUp = updatedFollowups;
     },
+    updateStatusMarker(state , action){
+      state.questions[action.payload.id].data.statusMarker = action.payload.status ;
+    }
   },
 });
 
@@ -66,4 +69,5 @@ export const {
   addFollowup,
   updateFollowup,
   deleteFollowup,
+  updateStatusMarker
 } = QuestionsSlice.actions;

@@ -3,16 +3,25 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { Handle, Position } from "reactflow";
 import Showdown from "showdown";
+import MDEditor from "@uiw/react-md-editor";
 import "./tooltip.css";
 import {
   deleteFollowup,
   deleteQuestion,
   updateFollowup,
+  updateStatusMarker,
 } from "../states/slices/questionsSlice";
-import { Delete, Edit, Save } from "@mui/icons-material";
+import {
+  Delete,
+  CheckCircle,
+  CheckCircleOutline,
+  Edit,
+  Save,
+} from "@mui/icons-material";
 import {
   deleteEdgesofBuilder,
   deleteNodesofBuilder,
+  setStatusMarker,
   updateEdgesofBuilder,
   updateHeightOfAnswerNode,
   updateInputValueOfNode,
@@ -29,43 +38,38 @@ const handleStyle = {
 };
 
 export default function QuetionNode({ data, isConnectable, id }) {
-  const [visibility, setVisibility] = useState(true);
+  const [preview, setPreview] = useState("preview");
   const inputRef = useRef();
   const [deleteButtonVisibility, setDeleteButtonVisibility] = useState(false);
-  const [inputValue , setInputValue] = useState('') ;
+  const [inputValue, setInputValue] = useState("");
   const nodes = useSelector((state) => state.builder.nodes);
   const edges = useSelector((state) => state.builder.edges);
   const questions = useSelector((state) => state.questions.questions);
 
   const dispatch = useDispatch();
-  const [htmlOutput, setHtmlOutput] = useState('');
-
-  const convertToHTML = (input) => {
-    const converter = new Showdown.Converter();
-    const htmlOutput = converter.makeHtml(input);
-    setHtmlOutput(htmlOutput);
-  };
+  const [htmlOutput, setHtmlOutput] = useState("");
 
   useEffect(() => {
     // inputRef.current.value = data.inputValue ? data.inputValue : "";
-    setInputValue(data.inputValue ? data.inputValue : "")
-    convertToHTML(data.inputValue ? data.inputValue : "")
+    setInputValue(data.inputValue ? data.inputValue : "");
+
     if (data.inputValue) {
-      setVisibility(false);
+      setPreview("preview");
+    } else {
+      setPreview("edit");
     }
   }, []);
 
   function saveClickHandler() {
-    if (inputValue) {
-      setVisibility((pre) => !pre);
-    }
+    if (inputValue)
+      setPreview((pre) => {
+        return pre === "preview" ? "edit" : "preview";
+      });
     const parentId = data.parentNode;
 
     const node = nodes.find((item) => item.id === parentId);
 
-    dispatch(
-      updateInputValueOfNode({ id: id, inputValue: inputValue })
-    );
+    dispatch(updateInputValueOfNode({ id: id, inputValue: inputValue }));
 
     dispatch(
       updateFollowup({
@@ -99,36 +103,64 @@ export default function QuetionNode({ data, isConnectable, id }) {
       setDeleteButtonVisibility(false);
     }
   }, [questions]);
+
+  function statusChangeHandler(status) {
+    dispatch(setStatusMarker({ id: id, status: status }));
+    dispatch(updateStatusMarker({ id: id, status: status }));
+  }
   return (
-    <div className="text-updater-node m-4">
+    <div className="text-updater-node m-4 nodrag w-full" style={{border:'1px solid #c0902c'}}>
       <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg">
-        <div className="flex items-center">
-          <div className="tooltip">
-            <textarea
+        <div className="flex items-center w-full">
+          <div className="tooltip nodrag w-full">
+            <input
               type="text"
               value={inputValue}
-              onChange={(e)=>{setInputValue(e.target.value);convertToHTML(e.target.value) }}
-              ref={inputRef}
-              className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:border-blue-500 input-with-tooltip"
+              onChange={(e) => setInputValue(e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:border-blue-500"
               placeholder="Type your question ..."
-              disabled={!visibility}
-              style={{resize:'none'}}
-              rows={1}
-              cols={23}
+              disabled={preview ==="preview"}
             />
-            <div className="tooltip-text" dangerouslySetInnerHTML={{ __html: htmlOutput }}></div>
+            {/* <MDEditor
+              value={inputValue}
+              onChange={(val) => {
+                setInputValue(val);
+              }}
+              height={80}
+              preview={preview}
+              extraCommands={[]}
+              visibleDragbar={false}
+            ></MDEditor>
+
+            <div className="tooltip-text">
+              <MDEditor.Markdown
+                source={inputValue}
+                style={{ whiteSpace: "pre-wrap" }}
+              />
+            </div> */}
           </div>
 
-          <div className="text-center mx-2">
-            <button onClick={saveClickHandler}>
-              {visibility ? (
+          <div className="text-center mx-2 flex pr-2">
+            <button
+              onClick={() => {
+                statusChangeHandler(!data.statusMarker);
+              }}
+            >
+              {data.statusMarker ? (
+                <CheckCircle sx={{ color: "green" }}></CheckCircle>
+              ) : (
+                <CheckCircleOutline sx={{ color: "gray" }}></CheckCircleOutline>
+              )}
+            </button>
+            <button className="ml-2" onClick={saveClickHandler}>
+              {preview === "edit" ? (
                 <Save sx={{ color: "green" }}></Save>
               ) : (
                 <Edit sx={{ color: "blue" }}></Edit>
               )}
             </button>
             {deleteButtonVisibility && (
-              <button className="ml-4" onClick={() => deleteQuestionHandler()}>
+              <button className="ml-2" onClick={() => deleteQuestionHandler()}>
                 <Delete sx={{ color: "red" }}></Delete>
               </button>
             )}

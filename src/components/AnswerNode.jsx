@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Handle, Position } from "reactflow";
-import QuetionNode from "./QuetionNode";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import Showdown from "showdown";
+
+import MDEditor from "@uiw/react-md-editor";
+
 import {
   updateEdgesofBuilder,
   updateHeightOfAnswerNode,
@@ -15,14 +16,10 @@ import {
   addQuestion,
   updateQuestion,
 } from "../states/slices/questionsSlice";
-import {
-  DeleteForever,
-  DeleteForeverOutlined,
-  Edit,
-  Save,
-} from "@mui/icons-material";
+import { Edit, Save } from "@mui/icons-material";
 import { green } from "@mui/material/colors";
 import "./tooltip.css";
+
 
 const handleStyle = {
   backgroundColor: "transparent",
@@ -33,38 +30,35 @@ const handleStyle = {
   borderLeft: "5px solid #333",
 };
 
-function AnswerNode({ data, isConnectable, id, parentNode }) {
-  const [visibility, setVisibility] = useState(true);
-  const [inputValue , setInputValue] = useState('')
-  const dispatch = useDispatch();
+export default function AnswerNode({ data, isConnectable, id, parentNode }) {
+  const [preview, setPreview] = useState("preview");
+  const [inputValue, setInputValue] = useState("");
+  const dispatchh = useDispatch();
   const nodes = useSelector((state) => state.builder.nodes);
   const edges = useSelector((state) => state.builder.edges);
   const quetions = useSelector((state) => state.questions.questions);
 
-  const [htmlOutput, setHtmlOutput] = useState('');
-
-  const convertToHTML = (input) => {
-    const converter = new Showdown.Converter();
-    const htmlOutput = converter.makeHtml(input);
-    setHtmlOutput(htmlOutput);
-  };
+  const [htmlOutput, setHtmlOutput] = useState("");
 
   useEffect(() => {
-    setInputValue(data.inputValue ? data.inputValue : "")
-    convertToHTML(data.inputValue ? data.inputValue : "")
+    setInputValue(data.inputValue ? data.inputValue : "");
+
     // inputref.current.value = data.inputValue ? data.inputValue : "";
     if (data.inputValue) {
-      setVisibility(false);
+      setPreview("preview");
+    } else {
+      setPreview("edit");
     }
   }, []);
 
   function saveClickHandler() {
-    if (inputValue) setVisibility((pre) => !pre);
+    if (inputValue)
+      setPreview((pre) => {
+        return pre === "preview" ? "edit" : "preview";
+      });
 
-    dispatch(
-      updateInputValueOfNode({ id: id, inputValue: inputValue })
-    );
-    dispatch(
+    dispatchh(updateInputValueOfNode({ id: id, inputValue: inputValue }));
+    dispatchh(
       updateQuestion({
         queId: data.parentNode,
         ansText: inputValue,
@@ -83,7 +77,7 @@ function AnswerNode({ data, isConnectable, id, parentNode }) {
     });
 
     if (pos === 0) {
-      pos = 80;
+      pos = 100;
     }
 
     const newQuestionNode = {
@@ -93,40 +87,50 @@ function AnswerNode({ data, isConnectable, id, parentNode }) {
       isConnectable: false,
       type: "quetionNode",
       parentNode: id,
-      data: { parentNode: id, inputValue: "" },
+      data: { parentNode: id, inputValue: "" ,statusMarker:false },
       extent: "parent",
+      style:{width:'450px'}
     };
 
     const newAnswerNode = {
       id: Date.now().toString() + "1",
       parentNode: newQuestionNode.id,
-      position: { x: 500, y: pos - 80 },
+      position: { x: 600, y: pos - 60 },
       draggable: true,
       type: "answerNode",
       isConnectable: false,
-      data: { parentNode: newQuestionNode.id, height: 180, inputValue: "" },
+      data: { parentNode: newQuestionNode.id, height: 190, inputValue: "" , },
+      style:{border:'1px solid #c0902c',borderRadius:'5px'}
     };
+
     const newEdge = {
       id: Date.now().toString(),
       source: newQuestionNode.id,
       target: newAnswerNode.id,
       type: "smoothstep",
+      style: {
+        strokeWidth: 2,
+        stroke: '#c0902c',
+      }
     };
 
-    dispatch(updateEdgesofBuilder([...edges, newEdge]));
-    dispatch(updateNodesOfBuilder([...nodes, newQuestionNode, newAnswerNode]));
-    dispatch(
+    dispatchh(updateEdgesofBuilder([...edges, newEdge]));
+    dispatchh(updateNodesOfBuilder([...nodes, newQuestionNode, newAnswerNode]));
+    dispatchh(
       addQuestion({ queId: newQuestionNode.id, ansId: newAnswerNode.id })
     );
-    dispatch(
+    dispatchh(
       addFollowup({ queId: data.parentNode, newQueId: newQuestionNode.id })
     );
-    dispatch(updateHeightOfAnswerNode({ id: id, type: "increase" }));
+    dispatchh(updateHeightOfAnswerNode({ id: id, type: "increase" }));
   }
 
   const divStyle = {
-    width: "400px",
+    width: "500px",
     height: `${data.height}px`,
+  };
+  const customToolbarConfig = {
+    options: ["bold", "italic", "underline"], // Include only the buttons you want
   };
 
   return (
@@ -139,26 +143,34 @@ function AnswerNode({ data, isConnectable, id, parentNode }) {
           style={handleStyle}
         />
       )}
-      <div className="max-w-md mx-auto bg-white p-8 rounded-lg  w-full">
+      <div className="max-w-md mx-auto bg-white pt-2 rounded-lg  w-full">
         <div className="flex items-center">
-          <div className="mb-4 tooltip">
-            <textarea
+          <div className="mb-4 tooltip nodrag w-full">
+           
+            <MDEditor
               value={inputValue}
-              type="text"
-              onChange={(e)=>{setInputValue(e.target.value); convertToHTML(e.target.value)}}
-              className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:border-blue-500 input-with-tooltip"
-              placeholder="Type your answer ..."
-              disabled={!visibility}
-              style={{resize:'none'}}
-              rows={1}
-              cols={70}
-            />
-            <div className="tooltip-text" dangerouslySetInnerHTML={{ __html: htmlOutput }}></div>
+              onChange={(val) => {
+                setInputValue(val);
+              }}
+              height={100}
+              preview={preview}
+              extraCommands={[]}
+              visibleDragbar={false}
+              config={customToolbarConfig}
+              placeholder="type your answer"
+            ></MDEditor>
+
+            <div className="tooltip-text">
+              <MDEditor.Markdown
+                source={inputValue}
+                style={{ whiteSpace: "pre-wrap" }}
+              />
+            </div>
           </div>
 
-          <div className="text-center mx-2 mb-4">
+          <div className="text-center mx-2 ">
             <button onClick={saveClickHandler}>
-              {visibility ? (
+              {preview === "edit" ? (
                 <Save sx={{ color: "green" }}></Save>
               ) : (
                 <Edit sx={{ color: "blue" }}></Edit>
@@ -168,6 +180,7 @@ function AnswerNode({ data, isConnectable, id, parentNode }) {
         </div>
         <button
           onClick={createFollowupsHandler}
+          style={{backgroundColor:'#c0902c'}}
           className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline-blue active:bg-blue-700"
         >
           Create followups +
@@ -176,5 +189,3 @@ function AnswerNode({ data, isConnectable, id, parentNode }) {
     </div>
   );
 }
-
-export default AnswerNode;
