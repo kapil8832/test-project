@@ -145,7 +145,7 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
       )}
       <div className="max-w-md mx-auto bg-white pt-2 rounded-lg  w-full">
         <div className="flex items-center">
-          <div className="mb-4 tooltip nodrag w-full">
+          <div data-color-mode="light" className="mb-2 tooltip nodrag w-full">
            
             <MDEditor
               value={inputValue}
@@ -158,6 +158,7 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
               visibleDragbar={false}
               config={customToolbarConfig}
               placeholder="type your answer"
+              overflow={false}
             ></MDEditor>
 
             <div className="tooltip-text">
@@ -189,3 +190,4 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
     </div>
   );
 }
+
