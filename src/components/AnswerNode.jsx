@@ -52,7 +52,6 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
 
   useEffect(() => {
     let flag;
-    console.log(data.parentNode);
     data.parentNode.forEach((item) => {
       if (questions[item]?.data.followUp.length === 0) {
         flag = true;

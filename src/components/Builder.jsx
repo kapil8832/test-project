@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import DeletableNode from "./DeletableNode";
+import CustomConnectionLine from "./CustomConnectionLine";
 import ReactFlow, {
   Background,
   Controls,
@@ -16,6 +17,7 @@ import AnswerNode from "./AnswerNode";
 import QuetionNode from "./QuetionNode";
 import { StepEdge } from "reactflow";
 import { SmoothStepEdge } from "reactflow";
+
 
 import "./text-updater-node.css";
 import { useDispatch } from "react-redux";
@@ -99,6 +101,7 @@ function Builder() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        connectionLineComponent={CustomConnectionLine}
         style={rfStyle}
       >
         <Background style={{ backgroundColor: "white" }}></Background>
