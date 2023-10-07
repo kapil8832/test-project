@@ -133,16 +133,6 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
         strokeWidth: 2,
         stroke: "#c0902c",
       },
-      labelShowBg: true,
-      labelStyle: {
-        fill: "white",
-        fontWeight: "500",
-        fontSize:'1rem'
-      },
-      labelBgPadding: [6, 3],
-      labelBgBorderRadius: 50,
-      labelBgStyle: { fill: "red", color: "#fff", fillOpacity: 0.7 },
-      label: "x",
     };
 
     dispatchh(updateEdgesofBuilder([...edges, newEdge]));

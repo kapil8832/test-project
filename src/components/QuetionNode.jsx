@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { Handle, Position } from "reactflow";
+import CustomHandle from "./CustomHandle";
 import "./tooltip.css";
 import {
   deleteFollowup,
@@ -153,12 +154,12 @@ export default function QuetionNode({
           </div>
         </div>
       </div>
-      <Handle
-        type="source"
+      <CustomHandle
         position={Position.Right}
         isConnectable={isConnectable}
-        isConnectableStart={isConnectableStart}
+        maxConnections={2}
       />
     </div>
   );
 }
+

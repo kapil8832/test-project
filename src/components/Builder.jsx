@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import DeletableNode from "./DeletableNode";
 import ReactFlow, {
   Background,
   Controls,
@@ -31,7 +32,7 @@ const rfStyle = {
 };
 
 const nodeTypes = { answerNode: AnswerNode, quetionNode: QuetionNode };
-const edgeTypes = { step: StepEdge, smoothstep: SmoothStepEdge };
+const edgeTypes = { step: StepEdge, smoothstep: SmoothStepEdge , deleteablenode: DeletableNode };
 function Builder() {
   const edges = useSelector((state) => state.builder.edges);
   const nodes = useSelector((state) => state.builder.nodes);
@@ -68,7 +69,7 @@ function Builder() {
           strokeWidth: 2,
           stroke: "#c0902c",
         },
-        type: "smoothstep",
+        type: "deleteablenode",
       };
       const targetNode = nodes.find((item)=> item.id === changes.target ) 
       const targetParentId = targetNode.parentNode ;
