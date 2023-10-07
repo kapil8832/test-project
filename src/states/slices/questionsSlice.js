@@ -37,7 +37,7 @@ const QuestionsSlice = createSlice({
       delete state.questions[action.payload];
     },
     addFollowup(state, action) {
-      state.questions[action.payload.queId].data.followUp.push({
+      state.questions[action.payload.queId]?.data.followUp.push({
         queId: action.payload.newQueId,
         queText: "",
       });
@@ -52,7 +52,8 @@ const QuestionsSlice = createSlice({
     deleteFollowup(state, action) {
       const updatedFollowups = state.questions[
         action.payload.queId
-      ].data.followUp.filter((item) => item.queId !== action.payload.queNodeId);
+      ]?.data.followUp.filter((item) => item.queId !== action.payload.queNodeId);
+      if(state.questions[action.payload.queId])
       state.questions[action.payload.queId].data.followUp = updatedFollowups;
     },
     updateStatusMarker(state , action){
@@ -65,6 +66,7 @@ const QuestionsSlice = createSlice({
     }
   },
 });
+
 
 export default QuestionsSlice;
 export const {

@@ -17,8 +17,9 @@ import {
   updateHeightOfAnswerNode,
   deleteEdgesofBuilder,
   deleteNodesofBuilder,
+  removeNodeParent,
 } from "../states/slices/builderSlice";
-import { deleteQuestion } from "../states/slices/questionsSlice";
+import { deleteQuestion , deleteFollowup } from "../states/slices/questionsSlice";
 
 export default function DeletableNode({
   id,
@@ -49,12 +50,23 @@ export default function DeletableNode({
     const source = edge.source;
     const node = nodes.find((item) => item.id === source);
     const parentId = node.parentNode ;
+    const parentNode = nodes.find((item) => item.id === parentId);
     dispacth(updatePostionOfchildNodes({ parentId: parentId, id: source }));
     dispacth(deleteEdgesofBuilder(id));
     dispacth(deleteNodesofBuilder(source));
-    dispacth(deleteQuestion(id));
+    dispacth(deleteQuestion(source));
     dispacth(updateHeightOfAnswerNode({ id: parentId, type: "decrese" }));
+    dispacth(removeNodeParent({node:edge.target , parent:edge.source}))
+    parentNode.data.parentNode.forEach(item=>{
+      dispacth(
+        deleteFollowup({
+          queId: item,
+          queNodeId: source,
+        })
+      );
+    })   
   }
+
 
   return (
     <>

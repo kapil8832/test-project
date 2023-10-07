@@ -102,6 +102,14 @@ const BuilderSlice = createSlice({
           item.data.parentNode.push(action.payload.parent)
         }
       })
+    },
+    removeNodeParent(state , action){
+      state.nodes.forEach(item=>{
+        if(item.id === action.payload.node){
+          const filterdParents = item.data.parentNode.filter(item=>item !== action.payload.parent);
+          item.data.parentNode = filterdParents ;
+        }
+      })
     }
   },
 });
@@ -117,5 +125,6 @@ export const {
   updateInputValueOfNode,
   setStatusMarker,
   makeNodeConnactable,
-  addNewParent
+  addNewParent,
+  removeNodeParent
 } = BuilderSlice.actions;

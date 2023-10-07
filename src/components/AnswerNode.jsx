@@ -168,7 +168,6 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
     dispatchh(makeNodeConnactable({id:data.parentNode[0]}))
   }
 
-  console.log(isConnectable);
   return (
     <div className="text-updater-node" style={divStyle}>
       {id !== "root" && (

@@ -105,7 +105,7 @@ export default function QuetionNode({
     dispatch(setStatusMarker({ id: id, status: status }));
     dispatch(updateStatusMarker({ id: id, status: status }));
   }
-  console.log(data.maxConnections);
+  
   return (
     <div
       className="text-updater-node m-4 nodrag w-full"
