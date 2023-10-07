@@ -20,9 +20,11 @@ import "./text-updater-node.css";
 import { useDispatch } from "react-redux";
 import { updateEdges, updateNodes } from "../states/slices/chatbotSlice";
 import {
+  addNewParent,
   updateEdgesofBuilder,
   updateNodesOfBuilder,
 } from "../states/slices/builderSlice";
+import { replaceQuestionContent } from "../states/slices/questionsSlice";
 
 const rfStyle = {
   backgroundColor: "#B8CEFF",
@@ -57,12 +59,37 @@ function Builder() {
     [edges]
   );
   const onConnect = useCallback(
-    (changes) => disptach(updateEdgesofBuilder(addEdge(changes, edges))),
+    (changes) => {
+      console.log(changes);
+      const addStyle = {
+        ...changes,
+        id: Date.now(),
+        style: {
+          strokeWidth: 2,
+          stroke: "#c0902c",
+        },
+        type: "smoothstep",
+      };
+      const targetNode = nodes.find((item)=> item.id === changes.target ) 
+      const targetParentId = targetNode.parentNode ;
+      disptach(updateEdgesofBuilder(addEdge(addStyle, edges)));
+      disptach(replaceQuestionContent({replace:changes.source , replaceWith:targetParentId}))
+      disptach(addNewParent({node:changes.target , parent: changes.source}))
+    },
     [edges]
   );
 
   return (
-    <div className="h-[100vh] w-[100vw] bg-white">
+    <div className="h-[100vh] w-[100vw] bg-white relative">
+      <div className="absolute bottom-40 right-12 z-10">
+        <button
+          // onClick={createFollowupsHandler}
+          style={{ backgroundColor: "#c0902c" }}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline-blue active:bg-blue-700"
+        >
+          Save Chat
+        </button>
+      </div>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -70,9 +97,10 @@ function Builder() {
         edgeTypes={edgeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
         style={rfStyle}
       >
-        <Background style={{backgroundColor:'white'}}></Background>
+        <Background style={{ backgroundColor: "white" }}></Background>
         <MiniMap></MiniMap>
         <Controls></Controls>
       </ReactFlow>

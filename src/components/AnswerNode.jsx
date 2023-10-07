@@ -6,6 +6,9 @@ import { useDispatch } from "react-redux";
 import MDEditor from "@uiw/react-md-editor";
 
 import {
+  deleteEdgesofBuilder,
+  deleteNodesofBuilder,
+  makeNodeConnactable,
   updateEdgesofBuilder,
   updateHeightOfAnswerNode,
   updateInputValueOfNode,
@@ -16,18 +19,17 @@ import {
   addQuestion,
   updateQuestion,
 } from "../states/slices/questionsSlice";
-import { Edit, Save } from "@mui/icons-material";
-import { green } from "@mui/material/colors";
+import { Delete, Edit, Save } from "@mui/icons-material";
+import { IconButton } from "@mui/material";
 import "./tooltip.css";
-
 
 const handleStyle = {
   backgroundColor: "transparent",
   height: "0px",
   width: "0px",
-  borderTop: "5px solid transparent",
-  borderBottom: "5px solid transparent",
-  borderLeft: "5px solid #333",
+  borderTop: "12px solid transparent",
+  borderBottom: "12px solid transparent",
+  borderLeft: "9px solid #c0902c",
 };
 
 export default function AnswerNode({ data, isConnectable, id, parentNode }) {
@@ -36,9 +38,25 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
   const dispatchh = useDispatch();
   const nodes = useSelector((state) => state.builder.nodes);
   const edges = useSelector((state) => state.builder.edges);
-  const quetions = useSelector((state) => state.questions.questions);
+  const questions = useSelector((state) => state.questions.questions);
+  const [deleteButtonVisibility, setDeleteButtonVisibility] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
-  const [htmlOutput, setHtmlOutput] = useState("");
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
+  useEffect(() => {
+    if (questions[data.parentNode]?.data.followUp.length === 0) {
+      setDeleteButtonVisibility(true);
+    } else {
+      setDeleteButtonVisibility(false);
+    }
+  }, [questions]);
 
   useEffect(() => {
     setInputValue(data.inputValue ? data.inputValue : "");
@@ -58,12 +76,14 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
       });
 
     dispatchh(updateInputValueOfNode({ id: id, inputValue: inputValue }));
-    dispatchh(
-      updateQuestion({
-        queId: data.parentNode,
-        ansText: inputValue,
-      })
-    );
+    data.parentNode.forEach((id) => {
+      dispatchh(
+        updateQuestion({
+          queId: id,
+          ansText: inputValue,
+        })
+      );
+    });
   }
 
   function createFollowupsHandler() {
@@ -85,11 +105,12 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
       position: { x: 0, y: pos + 60 },
       draggable: false,
       isConnectable: false,
+      isConnectableStart: false,
       type: "quetionNode",
       parentNode: id,
-      data: { parentNode: id, inputValue: "" ,statusMarker:false },
+      data: { parentNode: id, inputValue: "", statusMarker: false },
       extent: "parent",
-      style:{width:'450px'}
+      style: { width: "450px" },
     };
 
     const newAnswerNode = {
@@ -98,9 +119,9 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
       position: { x: 600, y: pos - 60 },
       draggable: true,
       type: "answerNode",
-      isConnectable: false,
-      data: { parentNode: newQuestionNode.id, height: 190, inputValue: "" , },
-      style:{border:'1px solid #c0902c',borderRadius:'5px'}
+      isConnectable: true,
+      data: { parentNode: [newQuestionNode.id], height: 190, inputValue: "" },
+      style: { border: "1px solid #c0902c", borderRadius: "5px" },
     };
 
     const newEdge = {
@@ -110,8 +131,18 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
       type: "smoothstep",
       style: {
         strokeWidth: 2,
-        stroke: '#c0902c',
-      }
+        stroke: "#c0902c",
+      },
+      labelShowBg: true,
+      labelStyle: {
+        fill: "white",
+        fontWeight: "500",
+        fontSize:'1rem'
+      },
+      labelBgPadding: [6, 3],
+      labelBgBorderRadius: 50,
+      labelBgStyle: { fill: "red", color: "#fff", fillOpacity: 0.7 },
+      label: "x",
     };
 
     dispatchh(updateEdgesofBuilder([...edges, newEdge]));
@@ -119,9 +150,10 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
     dispatchh(
       addQuestion({ queId: newQuestionNode.id, ansId: newAnswerNode.id })
     );
-    dispatchh(
-      addFollowup({ queId: data.parentNode, newQueId: newQuestionNode.id })
-    );
+    data.parentNode.forEach((id) => {
+      dispatchh(addFollowup({ queId: id, newQueId: newQuestionNode.id }));
+    });
+
     dispatchh(updateHeightOfAnswerNode({ id: id, type: "increase" }));
   }
 
@@ -133,6 +165,12 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
     options: ["bold", "italic", "underline"], // Include only the buttons you want
   };
 
+  function deleteClickHandler() {
+    dispatchh(deleteNodesofBuilder(id));
+    dispatchh(deleteEdgesofBuilder(data.parentNode));
+  }
+
+  console.log(isConnectable);
   return (
     <div className="text-updater-node" style={divStyle}>
       {id !== "root" && (
@@ -141,12 +179,29 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
           position={Position.Left}
           isConnectable={isConnectable}
           style={handleStyle}
-        />
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {isHovered && deleteButtonVisibility ? (
+            <IconButton
+              onClick={deleteClickHandler}
+              style={{
+                position: "relative",
+                top: "-22px",
+                left: "-25px",
+                zInde: "2",
+              }}
+            >
+              <Delete sx={{ color: "red" }}></Delete>
+            </IconButton>
+          ) : (
+            ""
+          )}
+        </Handle>
       )}
       <div className="max-w-md mx-auto bg-white pt-2 rounded-lg  w-full">
         <div className="flex items-center">
           <div data-color-mode="light" className="mb-2 tooltip nodrag w-full">
-           
             <MDEditor
               value={inputValue}
               onChange={(val) => {
@@ -170,18 +225,18 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
           </div>
 
           <div className="text-center mx-2 ">
-            <button onClick={saveClickHandler}>
+            <IconButton onClick={saveClickHandler}>
               {preview === "edit" ? (
                 <Save sx={{ color: "green" }}></Save>
               ) : (
                 <Edit sx={{ color: "blue" }}></Edit>
               )}
-            </button>
+            </IconButton>
           </div>
         </div>
         <button
           onClick={createFollowupsHandler}
-          style={{backgroundColor:'#c0902c'}}
+          style={{ backgroundColor: "#c0902c" }}
           className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline-blue active:bg-blue-700"
         >
           Create followups +
@@ -190,4 +245,3 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
     </div>
   );
 }
-

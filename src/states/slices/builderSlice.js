@@ -10,7 +10,7 @@ const nodes = n
         position: { x: 0, y: 60 },
         draggable: true,
         type: "answerNode",
-        data: { parentNode: "hello", height: 190, inputValue: "" },
+        data: { parentNode: ["hello"], height: 190, inputValue: "" },
         style:{border:'1px solid #c0902c', borderRadius:'5px'}
       },
     ];
@@ -88,6 +88,20 @@ const BuilderSlice = createSlice({
           item.data.statusMarker = action.payload.status;
         }
       })
+    },
+    makeNodeConnactable(state , action){
+      state.nodes.forEach(item =>{
+        if(item.id === action.payload.id){
+          item.isConnectable = action.payload.value ;
+        }
+      })
+    },
+    addNewParent(state, action){
+      state.nodes.forEach(item=>{
+        if(item.id === action.payload.node){
+          item.data.parentNode.push(action.payload.parent)
+        }
+      })
     }
   },
 });
@@ -101,5 +115,7 @@ export const {
   updatePostionOfchildNodes,
   updateHeightOfAnswerNode,
   updateInputValueOfNode,
-  setStatusMarker
+  setStatusMarker,
+  makeNodeConnactable,
+  addNewParent
 } = BuilderSlice.actions;

@@ -57,6 +57,11 @@ const QuestionsSlice = createSlice({
     },
     updateStatusMarker(state , action){
       state.questions[action.payload.id].data.statusMarker = action.payload.status ;
+    },
+    replaceQuestionContent(state , action){
+        const obj = state.questions[action.payload.replaceWith]
+        console.log(obj) ;
+        state.questions[action.payload.replace] = {...obj} ;
     }
   },
 });
@@ -69,5 +74,6 @@ export const {
   addFollowup,
   updateFollowup,
   deleteFollowup,
-  updateStatusMarker
+  updateStatusMarker,
+  replaceQuestionContent,
 } = QuestionsSlice.actions;
