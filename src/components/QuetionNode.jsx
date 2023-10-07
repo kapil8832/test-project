@@ -105,7 +105,7 @@ export default function QuetionNode({
     dispatch(setStatusMarker({ id: id, status: status }));
     dispatch(updateStatusMarker({ id: id, status: status }));
   }
-  console.log(isConnectable);
+  console.log(data.maxConnections);
   return (
     <div
       className="text-updater-node m-4 nodrag w-full"
@@ -157,7 +157,7 @@ export default function QuetionNode({
       <CustomHandle
         position={Position.Right}
         isConnectable={isConnectable}
-        maxConnections={2}
+        maxConnections={data.maxConnections}
       />
     </div>
   );

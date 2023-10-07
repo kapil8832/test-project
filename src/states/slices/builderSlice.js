@@ -92,7 +92,7 @@ const BuilderSlice = createSlice({
     makeNodeConnactable(state , action){
       state.nodes.forEach(item =>{
         if(item.id === action.payload.id){
-          item.isConnectable = action.payload.value ;
+          item.data.maxConnections = 2 ;
         }
       })
     },

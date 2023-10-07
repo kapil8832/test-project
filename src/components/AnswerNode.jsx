@@ -51,7 +51,14 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
   };
 
   useEffect(() => {
-    if (questions[data.parentNode]?.data.followUp.length === 0) {
+    let flag;
+    console.log(data.parentNode);
+    data.parentNode.forEach((item) => {
+      if (questions[item]?.data.followUp.length === 0) {
+        flag = true;
+      }
+    });
+    if (flag) {
       setDeleteButtonVisibility(true);
     } else {
       setDeleteButtonVisibility(false);
@@ -108,7 +115,7 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
       isConnectableStart: false,
       type: "quetionNode",
       parentNode: id,
-      data: { parentNode: id, inputValue: "", statusMarker: false },
+      data: { parentNode: id, inputValue: "", statusMarker: false , maxConnections:1 },
       extent: "parent",
       style: { width: "450px" },
     };
@@ -158,6 +165,7 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
   function deleteClickHandler() {
     dispatchh(deleteNodesofBuilder(id));
     dispatchh(deleteEdgesofBuilder(data.parentNode));
+    dispatchh(makeNodeConnactable({id:data.parentNode[0]}))
   }
 
   console.log(isConnectable);
