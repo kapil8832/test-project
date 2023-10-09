@@ -61,7 +61,6 @@ const QuestionsSlice = createSlice({
     },
     replaceQuestionContent(state , action){
         const obj = state.questions[action.payload.replaceWith]
-        console.log(obj) ;
         state.questions[action.payload.replace] = {...obj} ;
     }
   },

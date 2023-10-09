@@ -61,8 +61,7 @@ export default function QuetionNode({
     const parentId = data.parentNode;
 
     const node = nodes.find((item) => item.id === parentId);
-    console.log(node)
-
+   
     node.data.parentNode.forEach((itm) => {
       dispatch(
         updateFollowup({

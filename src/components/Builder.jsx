@@ -63,10 +63,9 @@ function Builder() {
   );
   const onConnect = useCallback(
     (changes) => {
-      console.log(changes);
       const addStyle = {
         ...changes,
-        id: Date.now(),
+        id: Date.now().toString(),
         style: {
           strokeWidth: 2,
           stroke: "#c0902c",
@@ -113,3 +112,4 @@ function Builder() {
 }
 
 export default Builder;
+

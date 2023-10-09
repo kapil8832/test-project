@@ -163,7 +163,7 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
 
   function deleteClickHandler() {
     dispatchh(deleteNodesofBuilder(id));
-    dispatchh(deleteEdgesofBuilder(data.parentNode));
+    dispatchh(deleteEdgesofBuilder(data.parentNode+""));
     dispatchh(makeNodeConnactable({id:data.parentNode[0]}))
   }
 
@@ -185,7 +185,7 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
                 position: "relative",
                 top: "-22px",
                 left: "-25px",
-                zInde: "2",
+                zIndex: "2",
               }}
             >
               <Delete sx={{ color: "red" }}></Delete>

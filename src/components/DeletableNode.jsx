@@ -52,7 +52,7 @@ export default function DeletableNode({
     const parentId = node.parentNode ;
     const parentNode = nodes.find((item) => item.id === parentId);
     dispacth(updatePostionOfchildNodes({ parentId: parentId, id: source }));
-    dispacth(deleteEdgesofBuilder(id));
+    dispacth(deleteEdgesofBuilder(source));
     dispacth(deleteNodesofBuilder(source));
     dispacth(deleteQuestion(source));
     dispacth(updateHeightOfAnswerNode({ id: parentId, type: "decrese" }));
@@ -91,3 +91,4 @@ export default function DeletableNode({
     </>
   );
 }
+

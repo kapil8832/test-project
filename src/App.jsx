@@ -7,9 +7,12 @@ import Flow from "./components/Flow";
 import CustomNode from "./components/CustomNode";
 import useFlowStore from "./components/useFlowStore";
 import Builder from "./components/Builder";
+import { useSelector } from "react-redux";
 
 
 const App = () => {
+  const eges = useSelector(state=>state.builder.edges) ;
+  console.log(eges)
   return (
     <>
       <BrowserRouter>
@@ -27,3 +30,6 @@ const App = () => {
   );
 };
 export default App;
+
+
+
