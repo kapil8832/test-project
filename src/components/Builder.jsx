@@ -28,6 +28,7 @@ import {
   updateNodesOfBuilder,
 } from "../states/slices/builderSlice";
 import { replaceQuestionContent } from "../states/slices/questionsSlice";
+import { useNavigate } from "react-router";
 
 const rfStyle = {
   backgroundColor: "#B8CEFF",
@@ -39,6 +40,7 @@ function Builder() {
   const edges = useSelector((state) => state.builder.edges);
   const nodes = useSelector((state) => state.builder.nodes);
   const questions = useSelector((state) => state.questions.questions);
+  const navTo = useNavigate()
   localStorage.setItem("edges", JSON.stringify(edges));
   localStorage.setItem("nodes", JSON.stringify(nodes));
   localStorage.setItem("questions", JSON.stringify(questions));
@@ -81,15 +83,19 @@ function Builder() {
     [edges]
   );
 
+  function gotobotHandler(){
+    navTo('/chatbot')
+  }
+
   return (
     <div className="h-[100vh] w-[100vw] bg-white relative">
       <div className="absolute bottom-40 right-12 z-10">
         <button
-          // onClick={createFollowupsHandler}
+          onClick={gotobotHandler}
           style={{ backgroundColor: "#c0902c" }}
           className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline-blue active:bg-blue-700"
         >
-          Save Chat
+          Go to chatbot
         </button>
       </div>
       <ReactFlow

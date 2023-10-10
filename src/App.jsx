@@ -13,6 +13,7 @@ import "react-chatbot-kit/build/main.css";
 import ActionProvider from "./chat-bot-utills/ActionProvider";
 import MessageParser from "./chat-bot-utills/MessageParser";
 import config from "./chat-bot-utills/config";
+import './App.css'
 
 const App = () => {
   return (

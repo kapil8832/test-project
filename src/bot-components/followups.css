@@ -5,9 +5,10 @@
   }
   
   .learning-option-button {
-    padding: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
     border-radius: 25px;
     background: transparent;
-    border: 1px solid green;
+    border: 1px solid #c0902c;
     margin: 3px;
   }

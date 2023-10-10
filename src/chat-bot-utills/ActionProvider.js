@@ -10,6 +10,9 @@ class ActionProvider {
     }
   
     handleJavascriptList = (id) => {
+      if(questions[id].data.statusMarker){
+         console.log(" status marked as done ")
+      }
       const message = this.createChatBotMessage(
         questions[id].data.ansText,
         {
