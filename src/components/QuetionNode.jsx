@@ -61,7 +61,7 @@ export default function QuetionNode({
     const parentId = data.parentNode;
 
     const node = nodes.find((item) => item.id === parentId);
-   
+
     node.data.parentNode.forEach((itm) => {
       dispatch(
         updateFollowup({
@@ -79,15 +79,15 @@ export default function QuetionNode({
     dispatch(updatePostionOfchildNodes({ parentId: parentId, id: id }));
     dispatch(deleteNodesofBuilder(id));
     dispatch(deleteEdgesofBuilder(id));
-    node.data.parentNode.forEach(item=>{
+    node.data.parentNode.forEach((item) => {
       dispatch(
         deleteFollowup({
           queId: item,
           queNodeId: id,
         })
       );
-    })
-    
+    });
+
     dispatch(deleteQuestion(id));
     dispatch(updateHeightOfAnswerNode({ id: parentId, type: "decrese" }));
   }
@@ -104,10 +104,10 @@ export default function QuetionNode({
     dispatch(setStatusMarker({ id: id, status: status }));
     dispatch(updateStatusMarker({ id: id, status: status }));
   }
-  
+
   return (
     <div
-      className="text-updater-node m-4 nodrag w-full"
+      className="bg-white rounded-lg m-4 nodrag w-full"
       style={{ border: "1px solid #c0902c" }}
     >
       <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg">
@@ -161,4 +161,3 @@ export default function QuetionNode({
     </div>
   );
 }
-

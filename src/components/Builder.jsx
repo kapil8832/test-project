@@ -11,7 +11,7 @@ import ReactFlow, {
   updateEdge,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import TextUpdaterNode from "./CustomNode";
+
 import { useSelector } from "react-redux";
 import AnswerNode from "./AnswerNode";
 import QuetionNode from "./QuetionNode";
@@ -19,9 +19,9 @@ import { StepEdge } from "reactflow";
 import { SmoothStepEdge } from "reactflow";
 
 
-import "./text-updater-node.css";
+
 import { useDispatch } from "react-redux";
-import { updateEdges, updateNodes } from "../states/slices/chatbotSlice";
+
 import {
   addNewParent,
   updateEdgesofBuilder,

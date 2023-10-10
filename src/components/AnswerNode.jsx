@@ -156,6 +156,8 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
   const divStyle = {
     width: "500px",
     height: `${data.height}px`,
+    backgroundColor:'white',
+    borderRadius:'5px'
   };
   const customToolbarConfig = {
     options: ["bold", "italic", "underline"], // Include only the buttons you want
@@ -168,7 +170,7 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
   }
 
   return (
-    <div className="text-updater-node" style={divStyle}>
+    <div style={divStyle}>
       
         <Handle
           type="target"
