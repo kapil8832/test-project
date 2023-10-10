@@ -1,8 +1,12 @@
 .react-chatbot-kit-chat-container {
     position: relative;
-    width: 352px;
+    width: 400px;
 }
 
 .react-chatbot-kit-chat-bot-message {  
     margin-left: 10px; 
+    width: 100%;
+}
+.wmde-markdown .wmde-markdown-color {
+    background-color: 'red'
 }

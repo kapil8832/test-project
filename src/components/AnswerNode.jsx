@@ -169,7 +169,7 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
 
   return (
     <div className="text-updater-node" style={divStyle}>
-      {id !== "root" && (
+      
         <Handle
           type="target"
           position={Position.Left}
@@ -194,7 +194,7 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
             ""
           )}
         </Handle>
-      )}
+ 
       <div className="max-w-md mx-auto bg-white pt-2 rounded-lg  w-full">
         <div className="flex items-center">
           <div data-color-mode="light" className="mb-2 tooltip nodrag w-full">
@@ -215,7 +215,7 @@ export default function AnswerNode({ data, isConnectable, id, parentNode }) {
             <div className="tooltip-text">
               <MDEditor.Markdown
                 source={inputValue}
-                style={{ whiteSpace: "pre-wrap" }}
+                style={{ whiteSpace: "pre-wrap"}}
               />
             </div>
           </div>

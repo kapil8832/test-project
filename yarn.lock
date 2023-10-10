@@ -3478,11 +3478,11 @@
     "redux" "^4.0.4"
     "use-memo-one" "^1.1.1"
 
-"react-chatbot-kit@^2.1.2":
-  "integrity" "sha512-N9bhg7/YnVz3TcNaV19szfBqCLHfVevisdqg38QowOI1hxgebwejrkggGz+T04yJK2j7dhwNqHpx5nWMfugzZw=="
-  "resolved" "https://registry.npmjs.org/react-chatbot-kit/-/react-chatbot-kit-2.1.2.tgz"
+"react-chatbot-kit@https://github.com/kapil8832/react-chatbot-kit#markdown-support":
+  "resolved" "git+ssh://git@github.com/kapil8832/react-chatbot-kit.git#0fe2bf579edf46fbcffc70690ab783aecb5f4c28"
   "version" "2.1.2"
   dependencies:
+    "@uiw/react-md-editor" "^3.23.6"
     "react-conditionally-render" "^1.0.2"
 
 "react-conditionally-render@^1.0.2":
