@@ -2,11 +2,12 @@ import React from "react";
 import { createChatBotMessage } from "react-chatbot-kit";
 
 import Followups from "../bot-components/Followups";
+const questions = JSON.parse(localStorage.getItem('questions'))
 
 
 const config = {
   initialMessages: [
-    createChatBotMessage("hello what would you like to visit ", {
+    createChatBotMessage(questions['hello'].data.ansText, {
       widget: "followups",
       payload:"hello"
     }),
