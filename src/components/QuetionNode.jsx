@@ -107,7 +107,7 @@ export default function QuetionNode({
 
   return (
     <div
-      className="bg-white rounded-lg m-4 nodrag w-full"
+      className="bg-white rounded-lg p-1 m-4 nodrag w-full"
       style={{ border: "1px solid #c0902c" }}
     >
       <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg">
