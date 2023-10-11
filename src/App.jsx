@@ -8,6 +8,7 @@ import config from "./chat-bot-utills/config";
 import './App.css'
 
 const App = () => {
+  console.log("welcome")
   return (
     <>
       <BrowserRouter>
