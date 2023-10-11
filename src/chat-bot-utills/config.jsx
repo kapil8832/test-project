@@ -7,7 +7,7 @@ const questions = JSON.parse(localStorage.getItem('questions'))
 
 const config = {
   initialMessages: [
-    createChatBotMessage(questions?.['hello'].data.ansText, {
+    createChatBotMessage(questions?.hello.data.ansText, {
       widget: "followups",
       payload:"hello"
     }),
