@@ -1,5 +1,6 @@
 import React from "react";
 import { createChatBotMessage } from "react-chatbot-kit";
+import MyCustomChatMessage from "./MyCustomChatMessage";
 
 import Followups from "../bot-components/Followups";
 const questions = JSON.parse(localStorage.getItem('questions'))
@@ -12,6 +13,11 @@ const config = {
       payload:"hello"
     }),
   ],
+  customComponents: {
+    // Replaces the default header
+   header: () => <div style={{ backgroundColor: 'red', padding: "5px", borderRadius: "3px" }}>This is the header</div>,
+   botChatMessage: (props) => <MyCustomChatMessage {...props} />,
+ },
   customStyles:{
     botMessageBox: {
       backgroundColor: "#c0902c",

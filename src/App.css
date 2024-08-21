@@ -7,6 +7,7 @@
     margin-left: 10px; 
     width: 100%;
 }
-.wmde-markdown .wmde-markdown-color {
-    background-color: 'red'
+
+.react-chatbot-kit-chat-bot-avatar{
+    padding-top: 1rem;
 }

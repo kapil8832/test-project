@@ -93,7 +93,7 @@ export default function QuetionNode({
   }
 
   useEffect(() => {
-    if (questions[id]?.data.followUp.length === 0) {
+    if (questions[id]?.data?.followUp?.length === 0) {
       setDeleteButtonVisibility(true);
     } else {
       setDeleteButtonVisibility(false);

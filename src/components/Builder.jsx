@@ -75,7 +75,8 @@ function Builder() {
         type: "deleteablenode",
       };
       const targetNode = nodes.find((item)=> item.id === changes.target ) 
-      const targetParentId = targetNode.parentNode ;
+      const targetParentId = targetNode.parentNode || "hello"
+      console.log(targetParentId)
       disptach(updateEdgesofBuilder(addEdge(addStyle, edges)));
       disptach(replaceQuestionContent({replace:changes.source , replaceWith:targetParentId}))
       disptach(addNewParent({node:changes.target , parent: changes.source}))
